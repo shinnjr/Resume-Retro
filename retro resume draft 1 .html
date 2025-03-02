@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResumeSuite '95</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+        
+        :root {
+            --bg-color: #011354;
+            --primary: #ff6f9c;
+            --primary-light: #ffc0da;
+            --secondary: #6eeeff;
+            --secondary-light: #b0f8ff;
+            --accent: #ffbd59;
+            --text: #f8f8ff;
+            --text-dark: #c8c8d2;
+            --window-bg: rgba(37, 40, 61, 0.85);
+            --window-border: rgba(255, 255, 255, 0.2);
+            --button-bg: #ff6f9c;
+            --button-hover: #ff8fb0;
+            --window-title-bg: #ff6f9c;
+            --input-bg: rgba(10, 12, 33, 0.7);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background-color: var(--bg-color);
+            color: var(--text);
+            line-height: 1.6;
+            background-image: 
+                linear-gradient(to bottom, rgba(1, 19, 84, 0.8), rgba(1, 19, 84, 0.5)),
+                url('https://i.imgur.com/nRUBQSw.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+        }
+        
+        .header-logo {
+            font-family: 'VT323', monospace;
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            text-shadow: 3px 3px 0 rgba(255, 111, 156, 0.4),
+                         6px 6px 0 rgba(110, 238, 255, 0.2);
+            letter-spacing: 2px;
+        }
+        
+        .header-subtitle {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .vhs-effect {
+            position: relative;
+        }
+        
+        .vhs-effect::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                transparent 0%,
+                rgba(255, 255, 255, 0.05) 50%,
+                transparent 100%
+            );
+            pointer-events: none;
+            animation: vhsLines 8s linear infinite;
+        }
+        
+        @keyframes vhsLines {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        
+        /* Window Styles */
+        .window {
+            background-color: var(--window-bg);
+            border: 1px solid var(--window-border);
+            border-radius: 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+                        0 0 0 1px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .window-header {
+            background-color: var(--window-title-bg);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--window-border);
+        }
+        
+        .window-title {
+            font-family: 'VT323', monospace;
+            font-size: 1.25rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+        }
+        
+        .window-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .window-button {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .window-content {
+            padding: 2rem;
+        }
+        
+        /* Step Styles */
+        .step-progress {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            margin-bottom: 1.5rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--window-border);
+        }
+        
+        .step-indicator {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem 0;
+            position: relative;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+        
+        .step-indicator::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 2px;
+            background-color: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .step-indicator.active {
+            color: var(--secondary);
+        }
+        
+        .step-indicator.active::after {
+            background-color: var(--secondary);
+        }
+        
+        .step-indicator.completed {
+            color: var(--primary);
+        }
+        
+        .step-indicator.completed::after {
+            background-color: var(--primary);
+        }
+        
+        .step-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .step-title {
+            font-family: 'VT323', monospace;
+            font-size: 2rem;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: var(--secondary);
+            text-shadow: 3px 3px 0 rgba(110, 238, 255, 0.3);
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 2rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0;
+            color: var(--text);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(110, 238, 255, 0.2);
+        }
+        
+        .form-hint {
+            font-size: 0.875rem;
+            color: var(--text-dark);
+            margin-top: 0.5rem;
+        }
+        
+        /* Buttons */
+        .button {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            border-radius: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
+            box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .button:active {
+            transform: translateY(0);
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .button-secondary {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .button-secondary:hover {
+            background-color: rgba(255, 111, 156, 0.1);
+        }
+        
+        .button-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        /* Upload Styles */
+        .upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--secondary);
+            background-color: rgba(110, 238, 255, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .upload-text {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .upload-subtext {
+            color: var(--text-dark);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-area input[type="file"] {
+            display: none;
+        }
+        
+        /* Templates Grid */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .template-option {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .template-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .template-option.selected {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 111, 156, 0.3);
+        }
+        
+        .template-option.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 24px;
+            height: 24px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .template-preview {
+            height: 280px;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .template-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .template-name {
+            padding: 0.75rem;
+            text-align: center;
+            font-weight: 500;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text);
+        }
+        
+        /* Job Description Inputs */
+        .job-desc-container {
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+        
+        .job-desc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background-color: rgba(255, 111, 156, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .job-desc-title {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .job-type-selector {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .job-type-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .job-textarea {
+            width: 100%;
+            height: 200px;
+            padding: 1rem;
+            background-color: var(--input-bg);
+            border: none;
+            color: var(--text);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+        
+        .job-textarea:focus {
+            outline: none;
+        }
+        
+        .textarea-container {
+            position: relative;
+            background-color: var(--input-bg);
+        }
+        
+        .textarea-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: var(--secondary);
+        }
+        
+        .add-job-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 1rem;
+            background-color: rgba(110, 238, 255, 0.1);
+            border: 1px dashed rgba(110, 238, 255, 0.3);
+            color: var(--secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .add-job-btn:hover {
+            background-color: rgba(110, 238, 255, 0.2);
+        }
+        
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            color: var(--text-dark);
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+        }
+        
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .divider::before {
+            margin-right: 1rem;
+        }
+        
+        .divider::after {
+            margin-left: 1rem;
+        }
+        
+        /* Processing Animation */
+        .processing {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            color: var(--secondary);
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(110, 238, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--secondary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Resume Preview */
+        .resume-preview {
+            background-color: white;
+            padding: 2rem;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+            color: var(--dark);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .resume-preview::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.03),
+                    rgba(0, 0, 0, 0.03) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: var(--primary-light);
+        }
+        
+        .preview-title {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .ats-score {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .ats-icon {
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+        }
+        
+        /* Resume Styles */
+        .resume-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .resume-name {
+            font-size: 28px;
+            color: #47617a;
+            font-weight: normal;
+            margin-bottom: 5px;
+        }
+        
+        .resume-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+        
+        .resume-contact {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .resume-contact span {
+            margin: 0 5px;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin: 20px 0 15px;
+            position: relative;
+            font-weight: normal;
+            font-family: inherit;
+        }
+        
+        .section-header::before,
+        .section-header::after {
+            content: "";
+            display: inline-block;
+            width: 30%;
+            height: 1px;
+            background-color: #d4d9de;
+            vertical-align: middle;
+            margin: 0 10px;
+        }
+        
+        .skills-list {
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .skills-category {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .skill-item {
+            display: inline;
+        }
+        
+        .skill-item:not(:last-child)::after {
+            content: " | ";
+            margin: 0 3px;
+            color: #7f8c8d;
+        }
+        
+        .modified {
+            background-color: rgba(110, 238, 255, 0.2);
+            position: relative;
+        }
+        
+        .modified::after {
+            content: "OPTIMIZED";
+            position: absolute;
+            top: -15px;
+            right: 0;
+            font-size: 8px;
+            background-color: var(--secondary);
+            color: white;
+            padding: 2px 4px;
+            font-family: 'VT323', monospace;
+        }
+        
+        .hide {
+            display: none;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--button-hover);
+        }
+        
+        /* Palm Tree Decoration */
+        .palm-tree {
+            position: fixed;
+            bottom: 0;
+            right: 20px;
+            height: 300px;
+            width: auto;
+            opacity: 0.8;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .templates-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .window-content {
+                padding: 1rem;
+            }
+            
+            .button-wrapper {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-overlay"></div>
+    
+    <div class="container vhs-effect">
+        <header class="header">
+            <h1 class="header-logo">ResumeSuite '95</h1>
+            <p class="header-subtitle">Get past the ATS and into the paradise of job offers</p>
+        </header>
+        
+        <div class="window">
+            <div class="window-header">
+                <div class="window-title">ATS Navigator v3.2</div>
+                <div class="window-controls">
+                    <div class="window-button"></div>
+                    <div class="window-button"></div>
+                    <div class="window-button"></div>
+                </div>
+            </div>
+            
+            <div class="step-progress">
+                <div class="step-indicator active" id="step1-indicator">1: LinkedIn Profile</div>
+                <div class="step-indicator" id="step2-indicator">2: Choose Template</div>
+                <div class="step-indicator" id="step3-indicator">3: Job Descriptions</div>
+                <div class="step-indicator" id="step4-indicator">4: Download Resume</div>
+            </div>
+            
+            <div class="window-content">
+                <!-- Step 1: LinkedIn Profile -->
+                <div class="step-content active" id="step1-content">
+                    <h2 class="step-title">Connect LinkedIn</h2>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="linkedin-url">Your LinkedIn Profile URL</label>
+                        <input type="url" id="linkedin-url" class="form-input" placeholder="https://www.linkedin.com/in/yourprofile" value="https://www.linkedin.com/in/johndoe">
+                        <p class="form-hint">We'll extract your career highlights and experience</p>
+                    </div>
+                    
+                    <div class="processing hide" id="linkedin-processing">
+                        <div class="spinner"></div>
+                        <span>Processing your digital identity...</span>
+                    </div>
+                    
+                    <div class="button-wrapper">
+                        <div></div> <!-- Empty div for spacing -->
+                        <button class="button" id="step1-next">Connect & Continue</button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Resume Template -->
+                <div class="step-content" id="step2-content">
+                    <h2 class="step-title">Select Your Vibe</h2>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Upload Your Resume Template</label>
+                        <div class="upload-area" id="resume-upload-area">
+                            <input type="file" id="resume-file" accept=".pdf,.doc,.docx">
+                            <div class="upload-icon">📄</div>
+                            <div class="upload-text">Drop Your Resume File Here</div>
+                            <div class="upload-subtext">PDF, DOC, or DOCX format</div>
+                            <button class="button button-secondary">Browse Files</button>
+                        </div>
+                    </div>
+                    
+                    <div class="divider">OR PASTE A URL</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Resume URL to Copy</label>
+                        <input type="url" id="resume-url" class="form-input" placeholder="https://example.com/resume-template">
+                        <p class="form-hint">We'll analyze and emulate this style</p>
+                    </div>
+                    
+                    <div class="divider">OR CHOOSE A TEMPLATE</div>
+                    
+                    <div class="templates-grid">
+                        <div class="template-option selected" data-template="retro-wave">
+                            <div class="template-preview">
+                                <img src="https://i.imgur.com/cJmPuOj.jpg" alt="Retro Wave resume template">
+                            </div>
+                            <div class="template-name">RETRO WAVE</div>
+                        </div>
+                        <div class="template-option" data-template="executive">
+                            <div class="template-preview">
+                                <img src="https://i.imgur.com/YqWnKbl.jpg" alt="Executive resume template">
+                            </div>
+                            <div class="template-name">EXECUTIVE</div>
+                        </div>
+                        <div class="template-option" data-template="classic">
+                            <div class="template-preview">
+                                <img src="https://i.imgur.com/1jyRjqZ.jpg" alt="Classic resume template">
+                            </div>
+                            <div class="template-name">CLASSIC</div>
+                        </div>
+                    </div>
+                    
+                    <div class="button-wrapper">
+                        <button class="button button-secondary" id="step2-back">Back</button>
+                        <button class="button" id="step2-next">Select & Continue</button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Job Descriptions -->
+                <div class="step-content" id="step3-content">
+                    <h2 class="step-title">Target Jobs</h2>
+                    
+                    <div class="job-desc-container">
+                        <div class="job-desc-header">
+                            <div class="job-desc-title">Job Listing #1</div>
+                            <div class="job-type-selector">
+                                <div class="job-type-option">
+                                    <input type="radio" id="pastJob1" name="job-type-1" checked>
+                                    <label for="pastJob1">Current/Past Job</label>
+                                </div>
+                                <div class="job-type-option">
+                                    <input type="radio" id="targetJob1" name="job-type-1">
+                                    <label for="targetJob1">Target Job</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="textarea-container">
+                            <textarea class="job-textarea" id="job-desc-1" placeholder="Paste job description here..."></textarea>
+                            <div class="textarea-icon" id="job1-status"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="job-desc-container" id="job-container-2" style="display:none;">
+                        <div class="job-desc-header">
+                            <div class="job-desc-title">Job Listing #2</div>
+                            <div class="job-type-selector">
+                                <div class="job-type-option">
+                                    <input type="radio" id="pastJob2" name="job-type-2" checked>
+                                    <label for="pastJob2">Current/Past Job</label>
+                                </div>
+                                <div class="job-type-option">
+                                    <input type="radio" id="targetJob2" name="job-type-2">
+                                    <label for="targetJob2">Target Job</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="textarea-container">
+                            <textarea class="job-textarea" id="job-desc-2" placeholder="Paste job description here..."></textarea>
+                            <div class="textarea-icon" id="job2-status"></div>
+                        </div>
+                    </div>
+                    
+                    <button class="add-job-btn" id="add-job-btn">
+                        <span>+</span> Add Another Job Description
+                    </button>
+                    
+                    <div class="button-wrapper">
+                        <button class="button button-secondary" id="step3-back">Back</button>
+                        <button class="button" id="step3-next">Optimize Resume</button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Download Resume -->
+                <div class="step-content" id="step4-content">
+                    <h2 class="step-title">Your Optimized Resume</h2>
+                    
+                    <div class="resume-preview">
+                        <div class="preview-header">
+                            <div class="preview-title">ATS-READY RESUME</div>
+                            <div class="ats-score">
+                                <span class="ats-icon">★</span>
+                                <span id="ats-score-value">92%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="resume-header">
+                            <h1 class="resume-name">John Doe</h1>
+                            <h2 class="resume-title">Enterprise AI & Identity Security Sales Professional</h2>
+                            <div class="resume-contact">
+                                (555) 123-4567<span>|</span>john.doe@example.com<span>|</span>San Francisco, CA<span>|</span>Linkedin.com/in/johndoe/
+                            </div>
+                        </div>
+                        
+                        <h3 class="section-header">PROFILE SUMMARY</h3>
+                        <p>
+                            I am a results-driven enterprise sales professional with a proven track record of rapid advancement from Business Development Representative to Inside Sales Representative at Strata Identity, achieving the fastest promotion in company history. My experience involves deep understanding of identity security solutions, having consistently exceeded targets with a demonstrated ability to surpass previous company benchmarks by 150%. This strategic career trajectory positions me to deliver exceptional value, bringing with me expertise in full-cycle enterprise sales of identity and access management solutions with specialized knowledge of compliance frameworks (CMMC, CJIS MFA, NYDFS MFA). I leverage innovative AI-driven research methodologies to identify high-value prospects and develop targeted engagement strategies that drive consistent revenue growth. My approach includes proactively identifying business challenges and mapping them to technical solutions for CISOs, CIOs, and security stakeholders, often addressing needs before they're fully recognized. Ultimately, my goal is to accelerate the buying process while delivering exceptional value, positioning our solution as the clear choice in a competitive landscape.
+                        </p>
+                        
+                        <h3 class="section-header">SKILLS</h3>
+                        <div class="skills-list">
+                            <span class="skills-category">PROFESSIONAL SKILLS</span>
+                            <span class="modified">Enterprise AI Sales</span> | Solution Selling | MEDDIC Methodology | Pipeline Management | Value Proposition Design | Strategic Account Planning | Executive Presentations | Sales Process Optimization | Customer Success Enablement | Client Relationship Management | Consultative Selling | Team Leadership | Strategic Planning
+                        </div>
+                        <div class="skills-list">
+                            <span class="skills-category">TECHNICAL SKILLS</span>
+                            Identity Access Management | Zero Trust Architecture | Multi-Factor Authentication | SAML/OAuth/OIDC | <span class="modified">Large Language Models</span> | Cloud Security | API Security | CMMC | NYDFS Compliance | CJIS Security | FedRAMP | SOC 2 | Salesforce | Outreach.io | ZoomInfo | LinkedIn Sales Navigator | Custom GPT Development | HubSpot
+                        </div>
+                        
+                        <!-- Additional resume sections would go here -->
+                    </div>
+                    
+                    <div class="button-wrapper">
+                        <button class="button button-secondary" id="step4-back">Back to Jobs</button>
+                        <button class="button" id="download-resume">Download PDF</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <img src="https://i.imgur.com/mEKvZ3A.png" alt="Palm tree decoration" class="palm-tree">
+    
+    <script>
+        // Step navigation
+        const stepIndicators = document.querySelectorAll('.step-indicator');
+        const stepContents = document.querySelectorAll('.step-content');
+        
+        // Next & Back buttons
+        document.getElementById('step1-next').addEventListener('click', function() {
+            simulateLinkedInProcessing();
+            setTimeout(() => goToStep(2), 2000);
+        });
+        
+        document.getElementById('step2-back').addEventListener('click', function() {
+            goToStep(1);
+        });
+        
+        document.getElementById('step2-next').addEventListener('click', function() {
+            goToStep(3);
+        });
+        
+        document.getElementById('step3-back').addEventListener('click', function() {
+            goToStep(2);
+        });
+        
+        document.getElementById('step3-next').addEventListener('click', function() {
+            processJobDescriptions();
+            setTimeout(() => goToStep(4), 2500);
+        });
+        
+        document.getElementById('step4-back').addEventListener('click', function() {
+            goToStep(3);
+        });
+        
+        // Function to navigate between steps
+        function goToStep(stepNumber) {
+            // Update indicators
+            stepIndicators.forEach((indicator, index) => {
+                const step = index + 1;
+                
+                // Clear all classes
+                indicator.classList.remove('active', 'completed');
+                
+                // Add appropriate class
+                if (step === stepNumber) {
+                    indicator.classList.add('active');
+                } else if (step < stepNumber) {
+                    indicator.classList.add('completed');
+                }
+            });
+            
+            // Show relevant content
+            stepContents.forEach((content, index) => {
+                const step = index + 1;
+                content.classList.toggle('active', step === stepNumber);
+            });
+            
+            // Special animations for certain steps
+            if (stepNumber === 4) {
+                animateATSScore();
+            }
+        }
+        
+        // LinkedIn processing simulation
+        function simulateLinkedInProcessing() {
+            const linkedinUrl = document.getElementById('linkedin-url').value;
+            
+            // Check if URL is provided
+            if (!linkedinUrl) {
+                alert('Please enter your LinkedIn URL');
+                return;
+            }
+            
+            // Show processing animation
+            const linkedinProcessing = document.getElementById('linkedin-processing');
+            linkedinProcessing.classList.remove('hide');
+            
+            // Disable the button while "processing"
+            document.getElementById('step1-next').disabled = true;
+        }
+        
+        // Process job descriptions
+        function processJobDescriptions() {
+            // Get job description text
+            const jobDesc1 = document.getElementById('job-desc-1').value;
+            
+            if (!jobDesc1) {
+                alert('Please enter at least one job description');
+                return;
+            }
+            
+            // Update job1 status to show it's processing
+            document.getElementById('job1-status').innerHTML = '⏳';
+            
+            // Check if job container 2 is visible and has content
+            const jobContainer2 = document.getElementById('job-container-2');
+            if (jobContainer2.style.display !== 'none') {
+                const jobDesc2 = document.getElementById('job-desc-2').value;
+                if (jobDesc2) {
+                    document.getElementById('job2-status').innerHTML = '⏳';
+                    
+                    // Simulate processing of second job
+                    setTimeout(() => {
+                        document.getElementById('job2-status').innerHTML = '✓';
+                    }, 2000);
+                }
+            }
+            
+            // Simulate processing of first job
+            setTimeout(() => {
+                document.getElementById('job1-status').innerHTML = '✓';
+            }, 1500);
+        }
+        
+        // Template selection
+        const templateOptions = document.querySelectorAll('.template-option');
+        templateOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selected class from all options
+                templateOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+            });
+        });
+        
+        // Resume file upload
+        const resumeUploadArea = document.getElementById('resume-upload-area');
+        const resumeFileInput = document.getElementById('resume-file');
+        
+        resumeUploadArea.addEventListener('click', function() {
+            resumeFileInput.click();
+        });
+        
+        resumeFileInput.addEventListener('change', handleResumeUpload);
+        
+        function handleResumeUpload() {
+            if (resumeFileInput.files.length) {
+                const file = resumeFileInput.files[0];
+                
+                // Update UI to show file is selected
+                const uploadText = resumeUploadArea.querySelector('.upload-text');
+                const uploadSubtext = resumeUploadArea.querySelector('.upload-subtext');
+                
+                uploadText.textContent = 'Selected: ' + file.name;
+                uploadSubtext.textContent = 'Ready to scan template style';
+            }
+        }
+        
+        // Add job button
+        document.getElementById('add-job-btn').addEventListener('click', function() {
+            document.getElementById('job-container-2').style.display = 'block';
+            this.style.display = 'none';
+        });
+        
+        // ATS Score Animation
+        function animateATSScore() {
+            const scoreElement = document.getElementById('ats-score-value');
+            const targetScore = 92;
+            let currentScore = 65;
+            
+            const interval = setInterval(() => {
+                currentScore++;
+                scoreElement.textContent = currentScore + '%';
+                
+                if (currentScore >= targetScore) {
+                    clearInterval(interval);
+                }
+            }, 30);
+        }
+        
+        // Download Resume Button
+        document.getElementById('download-resume').addEventListener('click', function() {
+            alert('Your optimized resume is ready for download! \n\nIn a real implementation, this would generate a downloadable PDF.');
+        });
+    </script>
+</body>
+</html>
